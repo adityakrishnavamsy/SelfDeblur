@@ -6,7 +6,8 @@ class Conv2d(nn.Module):
     def __init__(self, n_in, n_out, bn, act_fn, ker_sz=3, strd=1):
         super(Conv2d, self).__init__() #https://www.kite.com/python/answers/how-to-use-super()-in-python 
         # super is used for additional functionality to intilialize the conv2d class here to reduce the duplication 
-        use_bias=True if bn==False else False
+        
+        use_bias=True if bn==False else False #bn batch normalization 
         #The bias is an additive parameter in the convolution. It’s like the b in f(x) = w*x + b. If you set bias=False, you will drop the b term, which might make
         #sense in some cases, e.g. if the next layer is an affine BatchNorm layer
          
@@ -26,9 +27,10 @@ class Conv2d(nn.Module):
         # initialization
         for m in self.modules():
             if isinstance(m, nn.Conv2d): #The isinstance() function returns True if the specified object is of the specified type, otherwise False i.e is element in module a CNN
-                nn.init.xavier_uniform_(m.weight)
-                if m.bias is not None:
-                    m.bias.data.zero_()
+                nn.init.xavier_uniform_(m.weight)#https://stackoverflow.com/questions/49433936/how-to-initialize-weights-in-pytorch
+                #use to initialize weights of a layer 
+                if m.bias is not None:# if there is bias in that layer 
+                    m.bias.data.zero_() #set bais to 0 ?
     
     def forward(self, x):
         return self.net(x)
