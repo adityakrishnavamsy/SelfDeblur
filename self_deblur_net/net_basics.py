@@ -7,21 +7,25 @@ class Conv2d(nn.Module):
         super(Conv2d, self).__init__() #https://www.kite.com/python/answers/how-to-use-super()-in-python 
         # super is used for additional functionality to intilialize the conv2d class here to reduce the duplication 
         use_bias=True if bn==False else False
-
-        modules = []   
+        #The bias is an additive parameter in the convolution. It’s like the b in f(x) = w*x + b. If you set bias=False, you will drop the b term, which might make
+        #sense in some cases, e.g. if the next layer is an affine BatchNorm layer
+         
+        modules = []   #Modules in Python are simply Python files with a .py extension. The name of the module will be the name of the file
         modules.append(nn.Conv2d(n_in, n_out, ker_sz, stride=strd, padding=(ker_sz-1)//2, bias=use_bias)) 
 
         if bn==True:
-            modules.append(nn.BatchNorm2d(n_out))
+            modules.append(nn.BatchNorm2d(n_out))# number of features=nout
+            #Batch normalization layers normalize the activations and gradients propagating through a neural network,
+            #making network training an easier optimization problem
         
-        if act_fn is not None:
+        if act_fn is not None: #if there are  activation function 
             modules.append(act_fn)
 
-        self.net=nn.Sequential(*modules)
+        self.net=nn.Sequential(*modules) #i think layers is *modules and it is a sequential model 
 
         # initialization
         for m in self.modules():
-            if isinstance(m, nn.Conv2d):
+            if isinstance(m, nn.Conv2d): #The isinstance() function returns True if the specified object is of the specified type, otherwise False i.e is element in module a CNN
                 nn.init.xavier_uniform_(m.weight)
                 if m.bias is not None:
                     m.bias.data.zero_()
