@@ -4,8 +4,8 @@ import torch.nn as nn
 ## 2D convolution layers
 class Conv2d(nn.Module):
     def __init__(self, n_in, n_out, bn, act_fn, ker_sz=3, strd=1):
-        super(Conv2d, self).__init__()
-
+        super(Conv2d, self).__init__() #https://www.kite.com/python/answers/how-to-use-super()-in-python 
+        # super is used for additional functionality to intilialize the conv2d class here to reduce the duplication 
         use_bias=True if bn==False else False
 
         modules = []   
