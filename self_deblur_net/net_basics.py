@@ -33,13 +33,15 @@ class Conv2d(nn.Module):
                     m.bias.data.zero_() #set bais to 0 ?
     
     def forward(self, x):
-        return self.net(x)
+        return self.net(x) # forward NN sequential 
 
 class Deconv2d(nn.Module):
     def __init__(self, n_in, n_out):
-        super(Deconv2d, self).__init__()
-
-        self.upsample=nn.Upsample(scale_factor=2, mode="bilinear")
+        super(Deconv2d, self).__init__() #super() lets you avoid referring to the base class explicitly, 
+        #which can be nice. But the main advantage comes with multiple inheritance # https://stackoverflow.com/questions/576169/understanding-python-super-with-init-methods
+      
+        self.upsample=nn.Upsample(scale_factor=2, mode="bilinear")#Upsampling layer is a simple layer with no weights that will double the dimensions of input and 
+        #can be used in a generative model when followed by a traditional convolutional layer
         self.net=nn.Sequential(Conv2d(n_in, n_out, False, None, 3, 1))
 
         for m in self.modules():
