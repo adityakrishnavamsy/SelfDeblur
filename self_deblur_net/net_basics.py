@@ -42,7 +42,7 @@ class Deconv2d(nn.Module):
       
         self.upsample=nn.Upsample(scale_factor=2, mode="bilinear")#Upsampling layer is a simple layer with no weights that will double the dimensions of input and 
         #can be used in a generative model when followed by a traditional convolutional layer
-        self.net=nn.Sequential(Conv2d(n_in, n_out, False, None, 3, 1))
+        self.net=nn.Sequential(Conv2d(n_in, n_out, False, None, 3, 1)) #these are classes so it is a seqclass and conv2d class agr are needed 
 
         for m in self.modules():
             if isinstance(m, nn.ConvTranspose2d):
