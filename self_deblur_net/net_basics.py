@@ -45,50 +45,54 @@ class Deconv2d(nn.Module):
         self.net=nn.Sequential(Conv2d(n_in, n_out, False, None, 3, 1)) #these are classes so it is a seqclass and conv2d class agr are needed 
 
         for m in self.modules():
-            if isinstance(m, nn.ConvTranspose2d):
+            if isinstance(m, nn.ConvTranspose2d):#Applies a 2D transposed convolution operator over an input image composed of several input planes
+                #Transpose is learning parameter while Up-sampling is no-learning parameters.
+                # ? why they are using this when module array has only Conv2d,activation,bn some times 
+                #Using Up-samling for faster inference or training because it does not require to update weight or compute gradient
+                # https://discuss.pytorch.org/t/torch-nn-convtranspose2d-vs-torch-nn-upsample/30574
                 nn.init.xavier_uniform_(m.weight)
                 if m.bias is not None:
                     m.bias.data.zero_()
 
-    def forward(self, x):
+    def forward(self, x):# forward nn
         return self.net(self.upsample(x))
 
 class Resnet_block(nn.Module):
     def __init__(self, n_in):
-        super(Resnet_block, self).__init__()
+        super(Resnet_block, self).__init__()#making it a super class 
 
-        self.conv_block = self.build_conv_block(n_in)
+        self.conv_block = self.build_conv_block(n_in)#see down there is a function/method 
 
         # initialization
         for m in self.modules():
-            if isinstance(m, nn.Conv2d):
-                nn.init.xavier_uniform_(m.weight)
-                if m.bias is not None:
+            if isinstance(m, nn.Conv2d):#if m is of type nn.Conv2d
+                nn.init.xavier_uniform_(m.weight)#the initialize weights 
+                if m.bias is not None:#if there is baisa make it to 0
                     m.bias.data.zero_()
 
-    def build_conv_block(self, n_in):
+    def build_conv_block(self, n_in):#takes input featues i think 
         conv_block=[]
-        conv_block+=[Conv2d(n_in, n_in, False, nn.ReLU(), 3, 1)]
+        conv_block+=[Conv2d(n_in, n_in, False, nn.ReLU(), 3, 1)]#kernel=3 stride=1,bn(batch normalization)=false
         conv_block+=[Conv2d(n_in, n_in, False, None, 3, 1)]
-        return nn.Sequential(*conv_block)
+        return nn.Sequential(*conv_block)#a sequential model with layers are in conv_block
 
-    def forward(self, x):
+    def forward(self, x): # x is i think n_in
         return x+self.conv_block(x)
 
 class Cascaded_resnet_blocks(nn.Module):
-    def __init__(self, n_in, n_blks):
+    def __init__(self, n_in, n_blks):#n_in=number of input features #n_blks=number of blocks 
         super(Cascaded_resnet_blocks, self).__init__()
 
         resnet_blocks=[]
-        for i in range(n_blks):
-            resnet_blocks+=[Resnet_block(n_in)]
-        self.net = nn.Sequential(*resnet_blocks)
+        for i in range(n_blks):#for number of blocks 
+            resnet_blocks+=[Resnet_block(n_in)]#see there is a method in for it
+        self.net = nn.Sequential(*resnet_blocks)#seq model 
 
         # initialization
-        for m in self.modules():
+        for m in self.modules(): # ? why they are using this when module array has only Conv2d,activation,bn some times 
             if isinstance(m, nn.Conv2d):
-                nn.init.xavier_normal_(m.weight)
-                if m.bias is not None:
+                nn.init.xavier_normal_(m.weight)#if Conv2d then initialize weights with xvavier             
+                if m.bias is not None: #if there is bais in that layer make it 0
                     m.bias.data.zero_()
 
     def forward(self, x):
