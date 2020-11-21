@@ -3,12 +3,12 @@ import torch.nn as nn
 from net_basics import *
 
 class Deblur_net(nn.Module):
-    def __init__(self, n_in, n_init, n_out):
+    def __init__(self, n_in, n_init, n_out):# input channels,input features,output channels as per prev programs 
         super(Deblur_net, self).__init__()
 
         # encoder 
-        self.en_conv0=Conv2d(n_in, n_init, False, nn.ReLU(), 7, 1)
-        self.en_resB0=Cascaded_resnet_blocks(n_init,3)
+        self.en_conv0=Conv2d(n_in, n_init, False, nn.ReLU(), 7, 1) #kernel size=7,stride=1
+        self.en_resB0=Cascaded_resnet_blocks(n_init,3)#input features,number of blocks
 
         self.en_conv1=Conv2d(n_init, n_init*2, False, nn.ReLU(), 3, 2)
         self.en_resB1=Cascaded_resnet_blocks(n_init*2,3)
@@ -30,11 +30,11 @@ class Deblur_net(nn.Module):
         self.de_upconv1=Deconv2d(n_init*2,n_init)
 
         self.de_resB0=Cascaded_resnet_blocks(n_init,3)
-        self.im0=Conv2d(n_init, n_out, False, None, 5, 1)
+        self.im0=Conv2d(n_init, n_out, False, None, 5, 1)#last layer no activation 
 
     def forward(self, im_blur):
         # encode image
-        en_feat0=self.en_resB0(self.en_conv0(im_blur))
+        en_feat0=self.en_resB0(self.en_conv0(im_blur))# connecting all the layers 
         en_feat1=self.en_resB1(self.en_conv1(en_feat0))
         en_feat2=self.en_resB2(self.en_conv2(en_feat1))
         en_feat3=self.en_resB3(self.en_conv3(en_feat2))
@@ -44,6 +44,6 @@ class Deblur_net(nn.Module):
         de_feat2=self.de_upconv2(self.de_resB2(en_feat2+de_feat3))
         de_feat1=self.de_upconv1(self.de_resB1(en_feat1+de_feat2))
         im_sharp=self.im0(self.de_resB0(en_feat0+de_feat1))
-
-        return im_sharp
+                   #return the sharp estimate 
+        return im_sharp 
 
