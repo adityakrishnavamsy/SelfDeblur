@@ -33,21 +33,22 @@ class ModelBase():
     # intermediate steps for backprop
     def eval(self):
         with torch.no_grad():#Disabling gradient calculation is useful for inference, when you are sure that you will not call Tensor.backward()
-            return self.forward()
+            return self.forward() #? used for connecting i think  
 
     def build_lr_scheduler(self):
         self.lr_schedulers = []
         for name in self.optimizer_names:
-            if isinstance(name, str):
-                optimizer = getattr(self, 'optimizer_' + name)
-                self.lr_schedulers.append(lr_scheduler.StepLR(optimizer, step_size=self.opts.lr_step, gamma=0.5))
+            if isinstance(name, str):#if name is of type string 
+                optimizer = getattr(self, 'optimizer_' + name) #getattr() function is used to get the value of an object's attribute 
+                self.lr_schedulers.append(lr_scheduler.StepLR(optimizer, step_size=self.opts.lr_step, gamma=0.5))#Decays the learning rate of  #self.opts.lr_step?
+                #each parameter group by gamma every step_size epochs.
 
     def update_lr(self):
-        for scheduler in self.lr_schedulers:
+        for scheduler in self.lr_schedulers: #update the learning for step
             scheduler.step()
 
         for name in self.optimizer_names:
             if isinstance(name, str):
                 optimizer = getattr(self, 'optimizer_' + name)
                 for param_group in optimizer.param_groups:
-                    print('optimizer_'+name+'_lr', param_group['lr'])
+                    print('optimizer_'+name+'_lr', param_group['lr']) ? #i think to print the optiizer with schedulers 
