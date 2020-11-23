@@ -58,4 +58,4 @@ def PSNR(img1, img2, mask=None): #https://en.wikipedia.org/wiki/Peak_signal-to-n
 	if mse == 0: #if images are identical then 
 		return 100
 	PIXEL_MAX = 1 #formula 
-	return 20 * math.log10(PIXEL_MAX / math.sqrt(mse))
+	return 20 * math.log10(PIXEL_MAX / math.sqrt(mse)) 
