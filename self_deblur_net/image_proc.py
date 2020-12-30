@@ -3,9 +3,9 @@ import torch
 import numpy as np
 import torch.nn as nn
 
-def white_balance(img):
-    img = (img*255.).astype(np.uint8)
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
+def white_balance(img): #An important goal of this adjustment is to render specific colors – particularly neutral colors – correctly
+    img = (img*255.).astype(np.uint8) #https://en.wikipedia.org/wiki/Color_balance
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2LAB) #https://stackoverflow.com/questions/54470148/white-balance-a-photo-from-a-known-point
     avg_a = np.average(img[:, :, 1])
     avg_b = np.average(img[:, :, 2])
     img[:, :, 1] = img[:, :, 1] - ((avg_a - 128) * (img[:, :, 0] / 255.0) * 1.1)
