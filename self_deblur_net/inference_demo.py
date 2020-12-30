@@ -11,7 +11,8 @@ from generic_train_test import *
 ##===================================================##
 ##********** Configure training settings ************##
 ##===================================================##
-parser=argparse.ArgumentParser()
+# https://www.youtube.com/watch?v=cdblJqEUDNo 
+parser=argparse.ArgumentParser() #create parser useful to discribe all arguments 
 parser.add_argument('--continue_train', type=bool, default=False, help='flags used to indicate if train model from previous trained weight')
 parser.add_argument('--is_training', type=bool, default=False, help='flag used for selecting training mode or evaluation mode')
 parser.add_argument('--n_channels', type=int, default=3, help='number of channels of input/output image')
@@ -25,7 +26,7 @@ parser.add_argument('--model_label', type=str, required=True, help='label used t
 parser.add_argument('--log_dir', type=str, required=True, help='directory used to store pre-trained models')
 parser.add_argument('--results_dir', type=str, required=True, help='directory used to store experimental results')
 
-opts=parser.parse_args()
+opts=parser.parse_args() # we parsed the arguments and gave var name args 
 
 ##===================================================##
 ##****************** Create model *******************##
@@ -42,7 +43,7 @@ IMG_EXTENSIONS = [
 def is_image_file(filename):
     return any(filename.endswith(extension) for extension in IMG_EXTENSIONS)
 
-class Test(Generic_train_test):
+class Test(Generic_train_test): # 
 	def demo(self):
 		all_files = os.listdir(opts.demo_data_dir)
 
