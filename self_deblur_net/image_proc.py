@@ -14,34 +14,38 @@ def white_balance(img): #An important goal of this adjustment is to render speci
     img = img.astype(np.float)/255.
     return img
 
-def warp_image_flow(ref_image, flow):
-    [B, _, H, W] = ref_image.size()
+def warp_image_flow(ref_image, flow):  # here ref image and flow both are o/p of a network so they are differentiable 
+    [B, _, H, W] = ref_image.size() #B= i think batch , H=height , W=width see 4/8 base paper  [batch_size, channels, height, width] 
     
     # mesh grid 
-    xx = torch.arange(0, W).view(1,-1).repeat(H,1)
+    xx = torch.arange(0, W).view(1,-1).repeat(H,1) # making a grid of the referecne image 
     yy = torch.arange(0, H).view(-1,1).repeat(1,W)
     xx = xx.view(1,1,H,W).repeat(B,1,1,1)
     yy = yy.view(1,1,H,W).repeat(B,1,1,1)
     grid = torch.cat((xx,yy),1).float()
 
-    if ref_image.is_cuda:
+    if ref_image.is_cuda: # GPU 
         grid = grid.cuda()
 
-    flow_f = flow + grid
+    flow_f = flow + grid  #warping each vertex of the lattice wrt the optical flow 
     flow_fx = flow_f[:, 0, :, :] 
     flow_fy = flow_f[:, 1, :, :]
 
-    with torch.no_grad():
-        mask_x = ~((flow_fx < 0) | (flow_fx > (W - 1)))
-        mask_y = ~((flow_fy < 0) | (flow_fy > (H - 1)))
-        mask = mask_x & mask_y
-        mask = mask.unsqueeze(1)
+    with torch.no_grad(): #will make all the operations in the block have no gradients.
+        #https://datascience.stackexchange.com/questions/32651/what-is-the-use-of-torch-no-grad-in-pytorch
+        mask_x = ~((flow_fx < 0) | (flow_fx > (W - 1))) #mask is used to deal with oclussion 5/8 pg 
+        mask_y = ~((flow_fy < 0) | (flow_fy > (H - 1))) #when ever there is a ocluded region mask is applied 
+        mask = mask_x & mask_y  
+        mask = mask.unsqueeze(1) #Returns a new tensor with a dimension of size one inserted at the specified position
+        #https://pytorch.org/docs/stable/generated/torch.unsqueeze.html
 
     flow_fx = flow_fx / float(W) * 2. - 1.
     flow_fy = flow_fy / float(H) * 2. - 1.
 
     flow_fxy = torch.stack([flow_fx, flow_fy], dim=-1)
     img = torch.nn.functional.grid_sample(ref_image, flow_fxy, padding_mode='zeros') 
+    #iven an input and a flow-field grid, computes the output using input values and pixel locations from grid
+    #https://pytorch.org/docs/stable/nn.functional.html
     return img, mask
 
 class Grid_gradient_central_diff():
