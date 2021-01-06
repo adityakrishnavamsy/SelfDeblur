@@ -51,4 +51,4 @@ class ModelBase():
             if isinstance(name, str):
                 optimizer = getattr(self, 'optimizer_' + name)
                 for param_group in optimizer.param_groups:
-                    print('optimizer_'+name+'_lr', param_group['lr']) ? #i think to print the optiizer with schedulers 
+                    print('optimizer_'+name+'_lr', param_group['lr']) #i think to print the optiizer with schedulers 
