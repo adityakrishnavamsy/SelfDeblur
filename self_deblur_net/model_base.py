@@ -40,7 +40,7 @@ class ModelBase():
         for name in self.optimizer_names:
             if isinstance(name, str):#if name is of type string 
                 optimizer = getattr(self, 'optimizer_' + name) #getattr() function is used to get the value of an object's attribute 
-                self.lr_schedulers.append(lr_scheduler.StepLR(optimizer, step_size=self.opts.lr_step, gamma=0.5))#Decays the learning rate of  #self.opts.lr_step?
+                self.lr_schedulers.append(lr_scheduler.StepLR(optimizer, step_size=self.opts.lr_step, gamma=0.5))#Decays the learning rate of  #self.opts.lr_step
                 #each parameter group by gamma every step_size epochs.
 
     def update_lr(self):
