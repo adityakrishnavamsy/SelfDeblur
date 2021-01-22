@@ -16,31 +16,31 @@ class Generic_train_test():
 
 	def train(self):
 		total_steps = 0
-		print('#training images ', len(self.dataloader)*self.opts.batch_sz)
+		print('#training images ', len(self.dataloader)*self.opts.batch_sz)#len(dataloader) number of train samples*batch size see dataloader.py 
 
-		for epoch in range(self.opts.start_epoch, self.opts.max_epochs):
-			if epoch > self.opts.lr_start_epoch_decay - self.opts.lr_step:
-				self.model.update_lr()
+		for epoch in range(self.opts.start_epoch, self.opts.max_epochs):#in range of epochs 
+			if epoch > self.opts.lr_start_epoch_decay - self.opts.lr_step:#epoch to start lr decay - lr decay rate
+				self.model.update_lr() #update the lr scheduler see model_bse.py 
 
-			if epoch % self.opts.save_freq==0:
+			if epoch % self.opts.save_freq==0: # save_frep in train_slef_flownet.py and all nets says that save checkpoints after a certain epochs
 				self.model.save_checkpoint(str(epoch))
 
 			for i, data in enumerate(self.dataloader):
-				total_steps+=1
-				_input=self.decode_input(data)
+				total_steps+=1 #counting the steps 
+				_input=self.decode_input(data) #deocde the input data i think it is give in batch of 4 
 
-				self.model.set_input(_input)
-				self.model.optimize_parameters()
+				self.model.set_input(_input)#model is taking the input images 
+				self.model.optimize_parameters() #in model deblurnet.py here forward,loss,backward,step is done 
 
 				#=========== visualize results ============#
-				if total_steps % self.opts.log_freq==0:
-					info = self.model.get_current_scalars()
+				if total_steps % self.opts.log_freq==0:               #when logger is updated when steps divisible  by log_freg
+					info = self.model.get_current_scalars() #get loss psnr etc..
 					for tag, value in info.items():
 						self.logger.add_scalar(tag, value, total_steps)
 
 					results = self.model.get_current_visuals()
 					for tag, images in results.items():
-						self.logger.add_images(tag, images, total_steps)
+						self.logger.add_images(tag, images, total_steps) #store the images steps info in logger 
 
 					print('epoch', epoch, 'steps', total_steps)
 					print('losses', info)
