@@ -45,7 +45,7 @@ def is_image_file(filename):
 
 class Test(Generic_train_test): # 
 	def demo(self):
-		all_files = sorted(os.listdir(opts.demo_data_dir))
+		all_files = sorted(os.listdir(opts.demo_data_dir)) #code change there for video o/p frames given in order to network
 		for i in range(len(all_files)):
 			f = all_files[i]
 			if not is_image_file(f):
