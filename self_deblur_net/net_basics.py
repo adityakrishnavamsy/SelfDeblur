@@ -30,7 +30,7 @@ class Conv2d(nn.Module):
                 nn.init.xavier_uniform_(m.weight)#https://stackoverflow.com/questions/49433936/how-to-initialize-weights-in-pytorch
                 #use to initialize weights of a layer 
                 if m.bias is not None:# if there is bias in that layer 
-                    m.bias.data.zero_() #set bais to 0 ?
+                    m.bias.data.zero_() #set bais to 0 
     
     def forward(self, x):
         return self.net(x) # forward NN sequential 
