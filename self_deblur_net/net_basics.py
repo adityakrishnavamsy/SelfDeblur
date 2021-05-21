@@ -47,7 +47,7 @@ class Deconv2d(nn.Module):
         for m in self.modules():
             if isinstance(m, nn.ConvTranspose2d):#Applies a 2D transposed convolution operator over an input image composed of several input planes
                 #Transpose is learning parameter while Up-sampling is no-learning parameters.
-                # ? why they are using this when module array has only Conv2d,activation,bn some times 
+                #  they are using this when module array has only Conv2d,activation,bn some times 
                 #Using Up-samling for faster inference or training because it does not require to update weight or compute gradient
                 # https://discuss.pytorch.org/t/torch-nn-convtranspose2d-vs-torch-nn-upsample/30574
                 nn.init.xavier_uniform_(m.weight)
@@ -89,7 +89,7 @@ class Cascaded_resnet_blocks(nn.Module):
         self.net = nn.Sequential(*resnet_blocks)#seq model 
 
         # initialization
-        for m in self.modules(): # ? why they are using this when module array has only Conv2d,activation,bn some times 
+        for m in self.modules(): #  they are using this when module array has only Conv2d,activation,bn some times 
             if isinstance(m, nn.Conv2d):
                 nn.init.xavier_normal_(m.weight)#if Conv2d then initialize weights with xvavier             
                 if m.bias is not None: #if there is bais in that layer make it 0
